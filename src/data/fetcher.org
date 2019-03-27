@@ -4,6 +4,9 @@ import numpy as np
 from PIL import Image
 from sklearn.model_selection import train_test_split
 
+from kaggle_data.downloader import KaggleDataDownloader
+
+
 class DatasetFetcher:
     def __init__(self):
         """
@@ -30,28 +33,21 @@ class DatasetFetcher:
         competition_name = "carvana-image-masking-challenge"
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        # destination_path = os.path.join(script_dir, '../../input/')
-        destination_path = os.getenv("DATA_PATH_0") + "/"
-
+        destination_path = os.path.join(script_dir, '../../input/')
         prefix = ""
         if hq_files:
             prefix = "_hq"
         files = ["train" + prefix + ".zip", "test" + prefix + ".zip", "metadata.csv.zip",
                  "train_masks.csv.zip", "train_masks.zip"]
-        # datasets_path = [destination_path + "train" + prefix, destination_path + "test" + prefix,
-        #                  destination_path + "metadata.csv", destination_path + "train_masks.csv",
-        #                  destination_path + "train_masks"]
-        datasets_path = [destination_path + "train" + prefix + "/images", destination_path + "test" + prefix + "/images",
+        datasets_path = [destination_path + "train" + prefix, destination_path + "test" + prefix,
                          destination_path + "metadata.csv", destination_path + "train_masks.csv",
-                         destination_path + "train" + prefix + "/masks"]
+                         destination_path + "train_masks"]
         is_datasets_present = True
 
         # If the folders already exists then the files may already be extracted
         # This is a bit hacky but it's sufficient for our needs
         for dir_path in datasets_path:
-            print('- Path: ' + dir_path)
             if not os.path.exists(dir_path):
-                print("WARN: DataFolder Not Found:" + dir_path)
                 is_datasets_present = False
 
         if not is_datasets_present:
@@ -87,7 +83,7 @@ class DatasetFetcher:
         else:
             if car_image_id + ".jpg" in self.train_files:
                 return self.train_data + "/" + car_image_id + ".jpg"
-        raise Exception("No image with this ID found:" + car_image_id)
+        raise Exception("No image with this ID found")
 
     def get_image_matrix(self, image_path):
         img = Image.open(image_path)

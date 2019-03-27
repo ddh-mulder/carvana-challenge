@@ -31,3 +31,18 @@ If you want to take a look at the prediction at each epochs you can use tensorbo
 ```
 tensorboard --logdir=./logs
 ```
+
+# Mulder Setup
+
+- mulder's run command
+```
+CUDA_VISIBLE_DEVICES=1  DATA_PATH_0=/home/mulder/Project/mulder/ml/data/carvana   python src/main.py
+```
+
+- mulder's tensorboard command
+```
+tensorboard --logdir=./logs --port=8011
+```
+
+
+

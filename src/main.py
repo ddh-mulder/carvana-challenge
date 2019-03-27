@@ -39,7 +39,7 @@ def main():
 
     # Download the datasets
     ds_fetcher = DatasetFetcher()
-    ds_fetcher.download_dataset()
+    ds_fetcher.download_dataset(False)
 
     # Get the path to the files for the neural net
     # We don't want to split train/valid for KFold crossval
