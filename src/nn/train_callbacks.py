@@ -43,6 +43,8 @@ class TensorboardVisualizerCallback(Callback):
             showing 3 patches of the original image
         """
 
+        print("SRC:", image.shape, mask.shape)
+
         H, W, C = image.shape
         results = np.zeros((H, 3 * W, 3), np.uint8)
         p = np.zeros((H * W, 3), np.uint8)
@@ -63,7 +65,11 @@ class TensorboardVisualizerCallback(Callback):
         results[:, 0:W] = image
         results[:, W:2 * W] = p
         results[:, 2 * W:3 * W] = masked_img
-        return results
+
+        print("LOGIMG:", results.shape)
+
+        #return results
+        return np.transpose(results, (2,0,1))
 
     def __call__(self, *args, **kwargs):
         if kwargs['step_name'] != "epoch":
