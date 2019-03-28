@@ -5,7 +5,7 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 
 class DatasetFetcher:
-    def __init__(self):
+    def __init__(self, opt):
         """
             A tool used to automatically download, check, split and get
             relevant information on the dataset
@@ -16,6 +16,7 @@ class DatasetFetcher:
         self.train_files = None
         self.test_files = None
         self.train_masks_files = None
+        self.opt = opt
 
     def download_dataset(self, hq_files=True):
         """
@@ -69,6 +70,10 @@ class DatasetFetcher:
         self.test_data = datasets_path[1]
         self.train_masks_data = datasets_path[4]
         self.train_files = sorted(os.listdir(self.train_data))
+
+        if self.opt.mode == "TEST":
+            self.train_files = self.train_files[0:10]  # make simple
+
         self.test_files = sorted(os.listdir(self.test_data))
         self.train_masks_files = sorted(os.listdir(self.train_masks_data))
         return datasets_path

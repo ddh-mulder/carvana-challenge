@@ -40,6 +40,8 @@ mkdir output
 cp /home/mulder/Project/mulder/ml/data/carvana/*gz ./output
 mkdir logs
 CUDA_VISIBLE_DEVICES=1  DATA_PATH_0=/home/mulder/Project/mulder/ml/data/carvana   python src/main.py
+or
+CUDA_VISIBLE_DEVICES=1  DATA_PATH_0=/home/mulder/Project/cephalo/snudh/size1024   python src/main.py
 
 dgx server : use /raid/datasets/carvana
 ```

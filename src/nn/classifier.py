@@ -11,9 +11,12 @@ from collections import OrderedDict
 import nn.losses as losses_utils
 import helpers
 
+from PIL import Image
+import numpy as np
+
 
 class CarvanaClassifier:
-    def __init__(self, net, max_epochs):
+    def __init__(self, net, max_epochs, opt):
         """
         The classifier for carvana used for training and launching predictions
         Args:
@@ -24,6 +27,7 @@ class CarvanaClassifier:
         self.max_epochs = max_epochs
         self.epoch_counter = 0
         self.use_cuda = torch.cuda.is_available()
+        self.opt = opt
 
     def restore_model(self, model_path):
         """
@@ -32,7 +36,10 @@ class CarvanaClassifier:
             model_path (str): The path to the model to restore
 
         """
+        print("LOAD previous model:" + model_path) 
         self.net.load_state_dict(torch.load(model_path))
+ 
+ 
 
     def _criterion(self, logits, labels):
         l = losses_utils.BCELoss2d().forward(logits, labels) + losses_utils.SoftDiceLoss().forward(logits, labels)
@@ -201,13 +208,37 @@ class CarvanaClassifier:
                 probs = F.sigmoid(logits)
                 probs = probs.data.cpu().numpy()
 
-                # If there are callback call their __call__ method and pass in some arguments
-                if callbacks:
-                    for cb in callbacks:
-                        cb(step_name="predict",
-                           net=self.net,
-                           probs=probs,
-                           files_name=files_name
-                           )
+                if self.opt.mode == 'TEST':
+                    # print(files_name)
+                    # print(probs.shape)
+                    # print(probs.dtype)
+
+                    # probs = (probs*255).astype('uint8')
+                    # print(probs.dtype)
+                    
+
+                    probs = probs * 255
+                    probs = np.vstack((probs, probs, probs))
+                    
+                    # print(probs.max())
+                    # print(probs.shape)
+
+                    probs = np.transpose(probs, (1,2,0))
+
+                    im = Image.fromarray(probs.astype('uint8'), 'RGB')
+
+                    # im = Image.fromarray(np.transpose(probs, (1,2,0)))
+
+                    im.save("output/result/" + files_name[0])
+
+                else:
+                    # If there are callback call their __call__ method and pass in some arguments
+                    if callbacks:
+                        for cb in callbacks:
+                            cb(step_name="predict",
+                            net=self.net,
+                            probs=probs,
+                            files_name=files_name
+                            )
 
                 pbar.update(1)
